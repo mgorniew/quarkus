@@ -8,7 +8,8 @@ import io.quarkus.devtools.commands.data.QuarkusCommandException;
 import io.quarkus.devtools.commands.data.QuarkusCommandInvocation;
 import io.quarkus.devtools.commands.data.QuarkusCommandOutcome;
 import io.quarkus.devtools.project.BuildTool;
-import io.quarkus.devtools.project.buildfile.GradleBuildFilesCreator;
+import io.quarkus.devtools.project.buildfile.GroovyGradleBuildFilesCreator;
+import io.quarkus.devtools.project.buildfile.KotlinGradleBuildFilesCreator;
 import io.quarkus.devtools.project.codegen.ProjectGenerator;
 import io.quarkus.devtools.project.codegen.ProjectGeneratorRegistry;
 import io.quarkus.devtools.project.codegen.SourceType;
@@ -69,7 +70,17 @@ public class CreateProjectCommandHandler implements QuarkusCommandHandler {
 
                 //TODO ia3andy extensions should be added directly during the project generation
                 if (invocation.getQuarkusProject().getBuildTool().equals(BuildTool.GRADLE)) {
-                    final GradleBuildFilesCreator creator = new GradleBuildFilesCreator(invocation.getQuarkusProject());
+                    final GroovyGradleBuildFilesCreator creator = new GroovyGradleBuildFilesCreator(
+                            invocation.getQuarkusProject());
+                    creator.create(
+                            invocation.getStringValue(PROJECT_GROUP_ID),
+                            invocation.getStringValue(PROJECT_ARTIFACT_ID),
+                            invocation.getStringValue(PROJECT_VERSION),
+                            quarkusProps,
+                            extensionsToAdd);
+                } else if (invocation.getQuarkusProject().getBuildTool().equals(BuildTool.GRADLE_KOTLIN_DSL)) {
+                    final KotlinGradleBuildFilesCreator creator = new KotlinGradleBuildFilesCreator(
+                            invocation.getQuarkusProject());
                     creator.create(
                             invocation.getStringValue(PROJECT_GROUP_ID),
                             invocation.getStringValue(PROJECT_ARTIFACT_ID),

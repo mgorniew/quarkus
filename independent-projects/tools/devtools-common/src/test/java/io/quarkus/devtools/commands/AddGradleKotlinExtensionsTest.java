@@ -4,7 +4,7 @@ import io.quarkus.devtools.commands.data.QuarkusCommandException;
 import io.quarkus.devtools.commands.data.QuarkusCommandOutcome;
 import io.quarkus.devtools.project.BuildTool;
 import io.quarkus.devtools.project.QuarkusProject;
-import io.quarkus.devtools.project.buildfile.AbstractGroovyGradleBuildFile;
+import io.quarkus.devtools.project.buildfile.AbstractKotlinGradleBuildFile;
 import io.quarkus.platform.descriptor.QuarkusPlatformDescriptor;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,15 +16,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.maven.model.Dependency;
 
-class AddGradleExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
+public class AddGradleKotlinExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
 
     @Override
     protected List<String> createProject() throws IOException, QuarkusCommandException {
         CreateProjectTest.delete(getProjectPath().toFile());
         new CreateProject(getProjectPath(), getPlatformDescriptor())
-                .buildTool(BuildTool.GRADLE)
+                .buildTool(BuildTool.GRADLE_KOTLIN_DSL)
                 .groupId("org.acme")
-                .artifactId("add-gradle-extension-test")
+                .artifactId("add-gradle-kts-extension-test")
                 .version("0.0.1-SNAPSHOT")
                 .execute();
         return readProject();
@@ -32,7 +32,7 @@ class AddGradleExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
 
     @Override
     protected List<String> readProject() throws IOException {
-        return Files.readAllLines(getProjectPath().resolve("build.gradle"));
+        return Files.readAllLines(getProjectPath().resolve("build.gradle.kts"));
     }
 
     @Override
@@ -52,7 +52,7 @@ class AddGradleExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
 
     private static String getBuildFileDependencyString(final String groupId, final String artifactId, final String version) {
         final String versionPart = version != null ? ":" + version : "";
-        return "    implementation '" + groupId + ":" + artifactId + versionPart + "'";
+        return "    implementation(\"" + groupId + ":" + artifactId + versionPart + "\")";
     }
 
     private QuarkusProject getQuarkusProject() {
@@ -61,7 +61,7 @@ class AddGradleExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
         return QuarkusProject.of(projectPath, platformDescriptor, new TestingGradleBuildFile(projectPath, platformDescriptor));
     }
 
-    static class TestingGradleBuildFile extends AbstractGroovyGradleBuildFile {
+    static class TestingGradleBuildFile extends AbstractKotlinGradleBuildFile {
 
         public TestingGradleBuildFile(Path projectDirPath, QuarkusPlatformDescriptor platformDescriptor) {
             super(projectDirPath, platformDescriptor);
@@ -69,7 +69,7 @@ class AddGradleExtensionsTest extends AbstractAddExtensionsTest<List<String>> {
 
         @Override
         protected List<Dependency> getDependencies() throws IOException {
-            final Matcher matcher = Pattern.compile("\\s*implementation\\s+'([^\\v:]+):([^\\v:]+)(:[^:\\v]+)?'")
+            final Matcher matcher = Pattern.compile("\\s*implementation\\s*\\(\"([^\\v:]+):([^\\v:]+)(:[^:\\v]+)?\"\\)")
                     .matcher(getBuildContent());
             final ArrayList<Dependency> builder = new ArrayList<>();
             while (matcher.find()) {

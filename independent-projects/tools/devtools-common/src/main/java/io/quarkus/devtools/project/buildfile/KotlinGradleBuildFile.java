@@ -7,14 +7,11 @@ import io.quarkus.devtools.project.extensions.ExtensionManager;
 import java.io.IOException;
 import java.util.Collection;
 
-/**
- * TODO We need to find a way to use the gradle api outside of a gradle plugin
- */
-public class GenericGradleBuildFile implements ExtensionManager {
+public class KotlinGradleBuildFile implements ExtensionManager {
 
     @Override
     public BuildTool getBuildTool() {
-        return BuildTool.GRADLE;
+        return BuildTool.GRADLE_KOTLIN_DSL;
     }
 
     @Override
@@ -28,12 +25,12 @@ public class GenericGradleBuildFile implements ExtensionManager {
     }
 
     @Override
-    public InstallResult install(Collection<AppArtifactCoords> coords) throws IOException {
+    public ExtensionManager.InstallResult install(Collection<AppArtifactCoords> coords) throws IOException {
         throw new IllegalStateException("This feature is not yet implemented outside of the Gradle Plugin.");
     }
 
     @Override
-    public UninstallResult uninstall(Collection<AppArtifactKey> keys) throws IOException {
+    public ExtensionManager.UninstallResult uninstall(Collection<AppArtifactKey> keys) throws IOException {
         throw new IllegalStateException("This feature is not yet implemented outside of the Gradle Plugin.");
     }
 
