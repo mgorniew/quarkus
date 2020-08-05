@@ -29,7 +29,7 @@ class CodestartsTest extends PlatformAwareTestBase {
     void loadBundledCodestartsTest() throws IOException {
         final Collection<Codestart> codestarts = CodestartLoader
                 .loadBundledCodestarts(inputBuilder(getPlatformDescriptor()).build());
-        assertThat(codestarts).hasSize(10);
+        assertThat(codestarts).hasSize(11);
     }
 
     @Test

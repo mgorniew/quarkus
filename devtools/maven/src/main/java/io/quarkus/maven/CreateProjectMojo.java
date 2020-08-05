@@ -183,7 +183,7 @@ public class CreateProjectMojo extends AbstractMojo {
 
             BuildTool buildToolEnum;
             try {
-                buildToolEnum = BuildTool.valueOf(buildTool.toUpperCase());
+                buildToolEnum = BuildTool.valueOf(buildTool.toUpperCase().replace('-', '_'));
             } catch (IllegalArgumentException e) {
                 String validBuildTools = String.join(",",
                         Arrays.asList(BuildTool.values()).stream().map(BuildTool::toString).collect(Collectors.toList()));
@@ -208,7 +208,7 @@ public class CreateProjectMojo extends AbstractMojo {
             File createdDependenciesBuildFile = new File(projectRoot, buildToolEnum.getDependenciesFile());
             if (BuildTool.MAVEN.equals(buildToolEnum)) {
                 createMavenWrapper(createdDependenciesBuildFile, ToolsUtils.readQuarkusProperties(platform));
-            } else if (BuildTool.GRADLE.equals(buildToolEnum)) {
+            } else if (BuildTool.GRADLE.equals(buildToolEnum) || BuildTool.GRADLE_KOTLIN_DSL.equals(buildToolEnum)) {
                 createGradleWrapper(platform, projectDirPath);
             }
         } catch (Exception e) {
