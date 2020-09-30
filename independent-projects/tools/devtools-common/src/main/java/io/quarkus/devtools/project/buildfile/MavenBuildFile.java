@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
@@ -77,6 +78,14 @@ public class MavenBuildFile extends BuildFile {
             if (model.getDependencies()
                     .stream()
                     .noneMatch(thisDep -> d.getManagementKey().equals(thisDep.getManagementKey()))) {
+                List<Dependency> dependencies = model.getDependencies();
+                for (int i = 0; i < dependencies.size(); i++) {
+                    String dependencyScope = dependencies.get(i).getScope();
+                    if (StringUtils.isNotBlank(dependencyScope) && !"compile".equals(dependencyScope)) {
+                        dependencies.add(i, d);
+                        return true;
+                    }
+                }
                 model.addDependency(d);
                 return true;
             }
